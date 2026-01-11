@@ -62,6 +62,7 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
+#include "lcd1602.h"
 
 /* from product-manual CL Default I2C bus address: 0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
 #define LCD_I2C_ADDR 0x27
@@ -121,8 +122,11 @@ static int lcd1602_probe(struct i2c_client *client,
     /*
     check if dev is i2c capable
     */
+
+    PDEBUG("Probing LCD1602 driver\n");
     if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
         dev_err(&client->dev, "I2C functionality not supported\n");
+        PDEBUG("I2C functionality not supported\n");
         return -EIO;
     }
     lcd = devm_kzalloc(&client->dev, sizeof(*lcd), GFP_KERNEL);
@@ -136,6 +140,7 @@ static int lcd1602_probe(struct i2c_client *client,
     // ret = lcd_init_display(client);
     if (ret < 0) {
         dev_err(&client->dev, "Failed to initialize LCD\n");
+        PDEBUG("Failed to initialize LCD\n");
         return ret;
     }
     
@@ -147,6 +152,7 @@ static int lcd1602_probe(struct i2c_client *client,
     ret = misc_register(&lcd->miscdev);
     if (ret) {
         dev_err(&client->dev, "Failed to register misc device: %d\n", ret);
+        PDEBUG("Failed to register misc device: %d\n", ret);
         return ret;
     }
 
@@ -161,6 +167,7 @@ static int lcd1602_remove(struct i2c_client *client)
     lcd_send_command(lcd->client, LCD_CLEAR);
     kfree(lcd);
     dev_info(&client->dev, "LCD1602 driver removed\n");
+    PDEBUG("LCD1602 driver removed\n");
     return 0;
 }
 

@@ -8,6 +8,13 @@
 
 MODULE_DEVICE_TABLE(i2c, lcd1602_id);
 
+struct lcd1602_data {
+    struct i2c_client *client;
+    u8 backlight;
+    struct miscdevice miscdev;
+    struct mutex lock;
+};
+
 static struct i2c_driver lcd1602_driver = {
     .driver = {
         .name = "lcd1602",

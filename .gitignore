@@ -1,0 +1,78 @@
+# Build artifacts
+*.o
+*.ko
+*.mod.o
+*.mod.c
+*.mod
+*.order
+*.symvers
+*.cmd
+
+# Kernel module signing
+*.mod.sig
+*.sig
+
+# Dependencies
+*.d
+*.a
+*.so
+*.so.*
+
+# Build directories
+build/
+dist/
+.build/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+tags
+TAGS
+
+# Compiled binaries
+*.elf
+*.out
+
+# Object files
+*.lo
+
+# Debug symbols
+*.dSYM/
+*.su
+*.gch
+
+# Autotools
+autom4te.cache/
+Makefile.in
+configure
+.deps/
+.libs/
+
+# CMake
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+compile_commands.json
+
+# Linux kernel build
+Module.symvers
+modules.order
+
+# Test artifacts
+*.gcno
+*.gcda
+coverage/
+*.lcov
+
+# Temporary files
+*.tmp
+*.bak
+*.rej
+*.orig
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md

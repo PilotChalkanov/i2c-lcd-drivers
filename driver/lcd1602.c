@@ -63,7 +63,35 @@
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
 
-MODULE_DEVICE_TABLE(i2c, lcd1602_id);
+/* from product-manual CL Default I2C bus address: 0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
+#define LCD_I2C_ADDR 0x27
+
+/* PCF8574 pin definitions*/
+#define LCD_RS    0x01  /* Bit 0 */
+#define LCD_RW    0x02  /* Bit 1 */
+#define LCD_EN    0x04  /* Bit 2 */
+#define LCD_BL    0x08  /* Bit 3 - Backlight */
+
+/*
+cmd ref: https://www.electronicwings.com/sensors-modules/lcd-16x2-display-module
+*/
+
+/* lcd cmds */
+#define LCD_CLEAR           0x01
+#define LCD_HOME            0x02
+#define LCD_ENTRY_MODE      0x04
+#define LCD_DISPLAY_CONTROL 0x08
+#define LCD_FUNCTION_SET    0x20
+
+/* cmd flags */
+#define LCD_ENTRY_LEFT       0x02
+#define LCD_DISPLAY_ON       0x04
+#define LCD_CURSOR_OFF       0x00
+#define LCD_BLINK_OFF        0x00
+#define LCD_4BIT_MODE        0x00
+#define LCD_2LINE            0x08
+#define LCD_5x8DOTS          0x00
+
 
 struct lcd1602_data {
     struct i2c_client *client;
@@ -71,6 +99,72 @@ struct lcd1602_data {
     struct miscdevice miscdev;
     struct mutex lock;
 };
+
+
+/* init lcd in 4-bit mode*/
+static int lcd_init_display(struct i2c_client *client){}
+
+
+
+/*
+probe func - mandatory for i2c drivers
+func is called when the driver is matched with a device.
+check if dev is i2c capable
+initialize the dev
+*/
+static int lcd1602_probe(struct i2c_client *client,
+                           const struct i2c_device_id *id)
+{
+    struct lcd1602_data *data;
+    int ret;
+
+    /*
+    check if dev is i2c capable
+    */
+    if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+        dev_err(&client->dev, "I2C functionality not supported\n");
+        return -EIO;
+    }
+    lcd = devm_kzalloc(&client->dev, sizeof(*lcd), GFP_KERNEL);
+    if (!lcd)
+        return -ENOMEM;
+    lcd->client = client;
+    lcd->backlight = LCD_BL; // Backlight ON
+    mutex_init(&lcd->lock);
+    i2c_set_clientdata(client, lcd);
+
+    ret = lcd_init_display(client);
+    if (ret < 0) {
+        dev_err(&client->dev, "Failed to initialize LCD\n");
+        return ret;
+    }
+    
+    lcd->miscdev.minor = MISC_DYNAMIC_MINOR;
+    lcd->miscdev.name = "lcd1602";
+    lcd->miscdev.fops = &lcd1602_fops;
+    lcd->miscdev.parent = &client->dev;
+
+    ret = misc_register(&lcd->miscdev);
+    if (ret) {
+        dev_err(&client->dev, "Failed to register misc device: %d\n", ret);
+        return ret;
+    }
+
+}
+
+static int lcd1602_remove(struct i2c_client *client)
+{
+    struct lcd1602_data *lcd = i2c_get_clientdata(client);
+
+    if (lcd)
+        misc_deregister(&lcd->miscdev);
+    lcd_send_command(lcd->client, LCD_CLEAR);
+    kfree(lcd);
+    dev_info(&client->dev, "LCD1602 driver removed\n");
+    return 0;
+}
+
+MODULE_DEVICE_TABLE(i2c, lcd1602_id);
 
 static struct i2c_driver lcd1602_driver = {
     .driver = {

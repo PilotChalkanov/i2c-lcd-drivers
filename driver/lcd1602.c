@@ -133,7 +133,7 @@ static int lcd1602_probe(struct i2c_client *client,
     mutex_init(&lcd->lock);
     i2c_set_clientdata(client, lcd);
 
-    ret = lcd_init_display(client);
+    // ret = lcd_init_display(client);
     if (ret < 0) {
         dev_err(&client->dev, "Failed to initialize LCD\n");
         return ret;

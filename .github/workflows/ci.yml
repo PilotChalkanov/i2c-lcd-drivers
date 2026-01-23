@@ -26,7 +26,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  snyk:    
+  snyk:
     name: Vulnerability Scan with Snyk
     runs-on: ubuntu-latest
     steps:
@@ -65,4 +65,4 @@ jobs:
   #         args: >
   #           --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" -Dsonar.projectBaseDir="PROJECT2_PATH/"4
         #Replace variable with project path
-  # Add other scan jobs if you wish to scan more projects in the monorepo  
+  # Add other scan jobs if you wish to scan more projects in the monorepo

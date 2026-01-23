@@ -143,7 +143,7 @@ static int lcd1602_probe(struct i2c_client *client,
         PDEBUG("Failed to initialize LCD\n");
         return ret;
     }
-    
+
     lcd->miscdev.minor = MISC_DYNAMIC_MINOR;
     lcd->miscdev.name = "lcd1602";
     lcd->miscdev.fops = &lcd1602_fops;

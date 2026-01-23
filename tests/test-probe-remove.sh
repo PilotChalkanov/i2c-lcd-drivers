@@ -18,7 +18,7 @@ LOAD_RESULT=$?
 
 if [ $LOAD_RESULT -eq 0 ]; then
     echo "✓ Driver loaded successfully"
-    
+
     echo ""
     echo "Verifying device files:"
     echo "---"

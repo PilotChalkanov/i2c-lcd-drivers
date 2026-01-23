@@ -1,4 +1,5 @@
 /*
+ * Copyright 2026 <Nikolay Chalkanov, aka PilotChalkanov> 
  * I2C LCD1602 Driver - HD44780 LCD Controller via PCF8574 I2C Expander
  *
  * DATASHEET REFERENCES:
@@ -62,9 +63,10 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
-#include "lcd1602.h"
+#include "driver/lcd1602.h"
 
-/* from product-manual CL Default I2C bus address: 0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
+/* from product-manual CL Default I2C bus address: 
+0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
 #define LCD_I2C_ADDR 0x27
 
 /* PCF8574 pin definitions*/
@@ -103,7 +105,7 @@ struct lcd1602_data {
 
 
 /* init lcd in 4-bit mode*/
-static int lcd_init_display(struct i2c_client *client){}
+static int lcd_init_display(struct i2c_client *client) {}
 
 
 
@@ -114,8 +116,7 @@ check if dev is i2c capable
 initialize the dev
 */
 static int lcd1602_probe(struct i2c_client *client,
-                           const struct i2c_device_id *id)
-{
+                         const struct i2c_device_id *id) {
     struct lcd1602_data *data;
     int ret;
 
@@ -133,7 +134,7 @@ static int lcd1602_probe(struct i2c_client *client,
     if (!lcd)
         return -ENOMEM;
     lcd->client = client;
-    lcd->backlight = LCD_BL; // Backlight ON
+        lcd->backlight = LCD_BL;  // Backlight ON
     mutex_init(&lcd->lock);
     i2c_set_clientdata(client, lcd);
 
@@ -155,11 +156,10 @@ static int lcd1602_probe(struct i2c_client *client,
         PDEBUG("Failed to register misc device: %d\n", ret);
         return ret;
     }
-
+    return 0;
 }
 
-static int lcd1602_remove(struct i2c_client *client)
-{
+static int lcd1602_remove(struct i2c_client *client) {
     struct lcd1602_data *lcd = i2c_get_clientdata(client);
 
     if (lcd)

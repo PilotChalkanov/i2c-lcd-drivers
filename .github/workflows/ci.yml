@@ -40,29 +40,29 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-  sonar_scan:
-    name: SonarQube Scan
-    runs-on: ubuntu-latest
-    env:
-      BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Install Build Wrapper
-        uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
-        env:
-          SONAR_HOST_URL: ${{vars.SONAR_HOST_URL}}
-      - name: Run Build Wrapper for project 2
-        run: |
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} <insert_your_clean_build_command_for_project2>
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_2 }}
-          SONAR_HOST_URL: ${{vars.SONAR_HOST_URL}}
-        with:
-          args: >
-            --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" -Dsonar.projectBaseDir="PROJECT2_PATH/"4
+  # sonar_scan:
+  #   name: SonarQube Scan
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Install Build Wrapper
+  #       uses: SonarSource/sonarqube-scan-action/install-build-wrapper@v4
+  #       env:
+  #         SONAR_HOST_URL: ${{vars.SONAR_HOST_URL}}
+  #     - name: Run Build Wrapper for project 2
+  #       run: |
+  #         build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} <insert_your_clean_build_command_for_project2>
+  #     - name: SonarQube Scan
+  #       uses: SonarSource/sonarqube-scan-action@v7
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_2 }}
+  #         SONAR_HOST_URL: ${{vars.SONAR_HOST_URL}}
+  #       with:
+  #         args: >
+  #           --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" -Dsonar.projectBaseDir="PROJECT2_PATH/"4
         #Replace variable with project path
   # Add other scan jobs if you wish to scan more projects in the monorepo  

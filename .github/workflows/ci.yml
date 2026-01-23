@@ -39,17 +39,6 @@ jobs:
         run: snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  check-dod:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone Repo
-        uses: actions/checkout@v3
-      - name: Check DoD
-        uses: platisd/definition-of-done@master
-        with:
-          dod_yaml: './.github/dod.yml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
   # sonar_scan:
   #   name: SonarQube Scan
   #   runs-on: ubuntu-latest

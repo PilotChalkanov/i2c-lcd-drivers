@@ -1,0 +1,4 @@
+dod:
+  - 'All code changes have been reviewed and approved by at least one other team member.'
+  - 'All unit tests pass successfully.'
+  - 'Code coverage meets the required threshold.'

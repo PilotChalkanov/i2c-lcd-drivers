@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 <Nikolay Chalkanov, aka PilotChalkanov> 
+ * Copyright 2026 <Nikolay Chalkanov, aka PilotChalkanov>
  * I2C LCD1602 Driver - HD44780 LCD Controller via PCF8574 I2C Expander
  *
  * DATASHEET REFERENCES:
@@ -65,7 +65,7 @@
 #include <linux/mutex.h>
 #include "driver/lcd1602.h"
 
-/* from product-manual CL Default I2C bus address: 
+/* from product-manual CL Default I2C bus address:
 0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
 #define LCD_I2C_ADDR 0x27
 

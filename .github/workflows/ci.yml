@@ -25,16 +25,12 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   snyk:
     name: Vulnerability Scan with Snyk
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - uses: snyk/actions/setup@master
-      - uses: actions/setup-go@v1
-        with:
-          go-version: '1.13'
       - name: Snyk monitor
         run: snyk test
         env:

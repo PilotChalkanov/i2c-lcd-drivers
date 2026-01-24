@@ -327,7 +327,7 @@ initialize the dev
 */
 static int lcd1602_probe(struct i2c_client *client,
                          const struct i2c_device_id *id) {
-    struct lcd1602_data *data;
+    struct lcd1602_data *lcd;
     int ret;
 
     /*

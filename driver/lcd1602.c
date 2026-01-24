@@ -69,7 +69,7 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
-/* from product-manual CL Default I2C bus address:
+/* From product-manual CL Default I2C bus address:
 0x3F for the PCF8574AT chip, 0x27 for the PCF8574T  */
 #define LCD_I2C_ADDR 0x27
 
@@ -80,7 +80,7 @@
 #define LCD_BL    0x08  /* Bit 3 - Backlight */
 
 /*
-cmd ref: https://www.electronicwings.com/sensors-modules/lcd-16x2-display-module
+CMD ref: https://www.electronicwings.com/sensors-modules/lcd-16x2-display-module
 */
 
 /* lcd cmds */
@@ -90,7 +90,7 @@ cmd ref: https://www.electronicwings.com/sensors-modules/lcd-16x2-display-module
 #define LCD_DISPLAY_CONTROL 0x08
 #define LCD_FUNCTION_SET    0x20
 
-/* cmd flags */
+/* CMD flags */
 #define LCD_ENTRY_LEFT       0x02
 #define LCD_DISPLAY_ON       0x04
 #define LCD_CURSOR_OFF       0x00
@@ -112,35 +112,35 @@ static int lcd_write_nibble(struct i2c_client *client, u8 nibble, u8 mode) {
     u8 data;
     int ret;
 
-    /* Prepare data byte to send to PCF8574 */
-    data = (nibble & 0x0F) << 4; /* Place nibble on D7-D4 */
+    /*prepare data byte to send to PCF8574 */
+    data = (nibble & 0x0F) << 4; /* place nibble on D7-D4 */
     if (mode)
-        data |= LCD_RS;          /* Set RS for data mode */
+        data |= LCD_RS;          /* set RS for data mode */
     else
-        data &= ~LCD_RS;         /* Clear RS for command mode */
+        data &= ~LCD_RS;         /* clear RS for command mode */
 
-    data |= lcd->backlight;      /* Set backlight state */
+    data |= lcd->backlight;      /* set backlight state */
 
-    /* Pulse EN high */
+    /* pulse EN high */
     data |= LCD_EN;
     ret = i2c_smbus_write_byte(client, data);
     if (ret < 0)
         return ret;
 
-    udelay(1); /* Enable pulse width >= 450ns */
+    udelay(1);
 
-    /* Pulse EN low */
+    /* pulse EN low */
     data &= ~LCD_EN;
     ret = i2c_smbus_write_byte(client, data);
     if (ret < 0)
         return ret;
 
-    udelay(50); /* Wait for command to process (>= 37µs) */
+    udelay(50);
 
     return 0;
 }
 
-/* Write a byte to LCD (sends as two 4-bit nibbles) */
+/* Writes a byte to LCD (sends as two 4-bit nibbles) */
 static int lcd_write_byte(struct i2c_client *client, u8 byte, u8 mode) {
     int ret;
 
@@ -157,30 +157,30 @@ static int lcd_write_byte(struct i2c_client *client, u8 byte, u8 mode) {
     return 0;
 }
 
-/* Send command to LCD */
+/* Sends command to LCD */
 static int lcd_send_command(struct i2c_client *client, u8 cmd) {
     /* RS=0 for command */
     return lcd_write_byte(client, cmd, 0);
 }
 
-/* Send data (character) to LCD */
+/* Sends data (character) to LCD */
 static int lcd_send_data(struct i2c_client *client, u8 data) {
     /* RS=1 for data */
     return lcd_write_byte(client, data, LCD_RS);
 }
 
 
-/* init lcd in 4-bit mode*/
+/* Initializes lcd in 4-bit mode*/
 static int lcd_init_display(struct i2c_client *client) {
     int ret;
 
     dev_info(&client->dev, "Initializing LCD display...\n");
 
-    /* Wait for power up */
+    /* wait for power up */
     msleep(50);
 
-    /* Initialize to 4-bit mode - special sequence */
-    /* Send 0x03 three times */
+    /* initialize to 4-bit mode - special sequence */
+    /* send 0x03 three times */
     ret = lcd_write_nibble(client, 0x30, 0);
     if (ret < 0) return ret;
     msleep(5);
@@ -193,12 +193,12 @@ static int lcd_init_display(struct i2c_client *client) {
     if (ret < 0) return ret;
     msleep(1);
 
-    /* Switch to 4-bit mode */
+    /* switch to 4-bit mode */
     ret = lcd_write_nibble(client, 0x20, 0);
     if (ret < 0) return ret;
     msleep(1);
 
-    /* Function set: 4-bit mode, 2 lines, 5x8 font */
+    /* function set: 4-bit mode, 2 lines, 5x8 font */
     ret = lcd_send_command(client,
                           LCD_FUNCTION_SET | LCD_4BIT_MODE | LCD_2LINE | LCD_5x8DOTS);
     if (ret < 0) {
@@ -207,7 +207,7 @@ static int lcd_init_display(struct i2c_client *client) {
     }
     msleep(1);
 
-    /* Display control: display on, cursor off, blink off */
+    /* display control: display on, cursor off, blink off */
     ret = lcd_send_command(client,
                           LCD_DISPLAY_CONTROL | LCD_DISPLAY_ON |
                           LCD_CURSOR_OFF | LCD_BLINK_OFF);
@@ -217,7 +217,7 @@ static int lcd_init_display(struct i2c_client *client) {
     }
     msleep(1);
 
-    /* Clear display */
+    /* clear display */
     ret = lcd_send_command(client, LCD_CLEAR);
     if (ret < 0) {
         dev_err(&client->dev, "Failed to clear display\n");
@@ -225,7 +225,7 @@ static int lcd_init_display(struct i2c_client *client) {
     }
     msleep(2);
 
-    /* Entry mode: increment cursor, no shift */
+    /* entry mode: increment cursor, no shift */
     ret = lcd_send_command(client, LCD_ENTRY_MODE | LCD_ENTRY_LEFT);
     if (ret < 0) {
         dev_err(&client->dev, "Failed to set entry mode\n");
@@ -237,7 +237,7 @@ static int lcd_init_display(struct i2c_client *client) {
     return 0;
 }
 
-/* Write a string to LCD */
+/* Writes a string to LCD */
 static int lcd_write_string(struct i2c_client *client, const char *str) {
     int ret;
 
@@ -251,7 +251,7 @@ static int lcd_write_string(struct i2c_client *client, const char *str) {
 }
 
 
-/* Write up to 2x16 chars from buffer to LCD. Excess is truncated. */
+/* Writes up to 2x16 chars from buffer to LCD. Excess is truncated. */
 static int lcd_write_buffer(struct lcd1602_data *lcd, const char *buf, size_t len) {
     int ret;
     size_t i;
@@ -320,7 +320,7 @@ static const struct file_operations lcd1602_fops = {
 };
 
 /*
-probe func - mandatory for i2c drivers
+Probe func
 func is called when the driver is matched with a device.
 check if dev is i2c capable
 initialize the dev

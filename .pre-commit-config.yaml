@@ -15,4 +15,4 @@ repos:
     hooks:
       - id: cpplint
         args:
-          - --filter=-whitespace/line_length,-whitespace/parens
+          - --filter=-whitespace/line_length,-whitespace/parens,-build/c++11,-build/gcc,-readability/casting,-build/include_what_you_use

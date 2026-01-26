@@ -399,6 +399,7 @@ MODULE_DEVICE_TABLE(i2c, lcd1602_id);
 /* Device Tree match table */
 static const struct of_device_id lcd1602_of_match[] = {
     { .compatible = "hitachi,hd44780" },
+    { .compatible = "pcf8574,a0" },
     { }
 };
 MODULE_DEVICE_TABLE(of, lcd1602_of_match);

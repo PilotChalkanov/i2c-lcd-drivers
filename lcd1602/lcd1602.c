@@ -144,13 +144,13 @@ static int lcd_write_nibble(struct i2c_client *client, u8 nibble, u8 mode) {
 static int lcd_write_byte(struct i2c_client *client, u8 byte, u8 mode) {
     int ret;
 
-    /*send upper nibble, by masking the byte with 11110000=0xF0 */
-    ret = lcd_write_nibble(client, byte & 0xF0, mode);
+    /* send upper nibble (high 4 bits) */
+    ret = lcd_write_nibble(client, (byte >> 4) & 0x0F, mode);
     if (ret < 0)
         return ret;
 
-    /*send lower nibble, shift and mask with 11110000=0xF0 */
-    ret = lcd_write_nibble(client, (byte << 4) & 0xF0, mode);
+    /* send lower nibble (low 4 bits) */
+    ret = lcd_write_nibble(client, byte & 0x0F, mode);
     if (ret < 0)
         return ret;
 

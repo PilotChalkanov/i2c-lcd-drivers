@@ -327,7 +327,7 @@ initialize the dev
 */
 static int lcd1602_probe(struct i2c_client *client,
                          const struct i2c_device_id *id) {
-    struct lcd1602_data *data;
+    struct lcd1602_data *lcd;
     int ret;
 
     /*
@@ -345,11 +345,11 @@ static int lcd1602_probe(struct i2c_client *client,
     if (!lcd)
         return -ENOMEM;
     lcd->client = client;
-        lcd->backlight = LCD_BL;  // Backlight ON
+    lcd->backlight = LCD_BL;  /* Backlight ON */
     mutex_init(&lcd->lock);
     i2c_set_clientdata(client, lcd);
 
-    // ret = lcd_init_display(client);
+    ret = lcd_init_display(client);
     if (ret < 0) {
         dev_err(&client->dev, "Failed to initialize LCD\n");
         PDEBUG("Failed to initialize LCD\n");
@@ -380,10 +380,10 @@ static int lcd1602_probe(struct i2c_client *client,
 static int lcd1602_remove(struct i2c_client *client) {
     struct lcd1602_data *lcd = i2c_get_clientdata(client);
 
-    if (lcd)
+    if (lcd) {
         misc_deregister(&lcd->miscdev);
-    lcd_send_command(lcd->client, LCD_CLEAR);
-    kfree(lcd);
+        lcd_send_command(lcd->client, LCD_CLEAR);
+    }
     dev_info(&client->dev, "LCD1602 driver removed\n");
     PDEBUG("LCD1602 driver removed\n");
     return 0;

@@ -6,6 +6,7 @@ set -e
 
 MODULE_NAME="lcd1602"
 DEVICE_NAME="lcd1602"
+KERNEL_VERSION=$(uname -r)
 
 echo "Loading ${MODULE_NAME} module..."
 
@@ -16,8 +17,13 @@ if lsmod | grep -q "${MODULE_NAME}"; then
 fi
 
 # Install the module
-echo "Installing ${MODULE_NAME} module..."
- insmod "./${MODULE_NAME}.ko"
+if [ -e /lib/modules/$kernel_ver/extra/$module.ko ]; then
+    echo "Installing ${MODULE_NAME} module..."
+    insmod /lib/modules/$KERNEL_VERSION/extra/${MODULE_NAME}.ko
+else
+    echo "Module not found in /lib/modules/$KERNEL_VERSION/extra/, attempting modprobe"
+    modprobe $MODULE_NAME || exit 1
+fi
 
 # Verify the module is loaded
 if lsmod | grep -q "${MODULE_NAME}"; then

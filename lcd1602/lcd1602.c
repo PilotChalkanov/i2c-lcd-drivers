@@ -63,7 +63,7 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
-#include "driver/lcd1602.h"
+#include "lcd1602.h"
 
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
@@ -144,13 +144,13 @@ static int lcd_write_nibble(struct i2c_client *client, u8 nibble, u8 mode) {
 static int lcd_write_byte(struct i2c_client *client, u8 byte, u8 mode) {
     int ret;
 
-    /*send upper nibble, by masking the byte with 11110000=0xF0 */
-    ret = lcd_write_nibble(client, byte & 0xF0, mode);
+    /* send upper nibble (high 4 bits) */
+    ret = lcd_write_nibble(client, (byte >> 4) & 0x0F, mode);
     if (ret < 0)
         return ret;
 
-    /*send lower nibble, shift and mask with 11110000=0xF0 */
-    ret = lcd_write_nibble(client, (byte << 4) & 0xF0, mode);
+    /* send lower nibble (low 4 bits) */
+    ret = lcd_write_nibble(client, byte & 0x0F, mode);
     if (ret < 0)
         return ret;
 
@@ -327,7 +327,7 @@ initialize the dev
 */
 static int lcd1602_probe(struct i2c_client *client,
                          const struct i2c_device_id *id) {
-    struct lcd1602_data *data;
+    struct lcd1602_data *lcd;
     int ret;
 
     /*
@@ -399,6 +399,7 @@ MODULE_DEVICE_TABLE(i2c, lcd1602_id);
 /* Device Tree match table */
 static const struct of_device_id lcd1602_of_match[] = {
     { .compatible = "hitachi,hd44780" },
+    { .compatible = "pcf8574,a0" },
     { }
 };
 MODULE_DEVICE_TABLE(of, lcd1602_of_match);

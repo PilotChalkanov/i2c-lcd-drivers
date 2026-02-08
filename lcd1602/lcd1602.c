@@ -63,7 +63,7 @@
 #include <linux/fs.h>
 #include <linux/uaccess.h>
 #include <linux/mutex.h>
-#include "lcd1602/lcd1602.h"
+#include "lcd1602.h"
 
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))

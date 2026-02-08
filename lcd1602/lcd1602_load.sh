@@ -7,10 +7,6 @@ set -e
 MODULE_NAME="lcd1602"
 DEVICE_NAME="lcd1602"
 
-echo "Building ${MODULE_NAME} module..."
-make clean
-make
-
 echo "Loading ${MODULE_NAME} module..."
 
 # Remove the module if already loaded

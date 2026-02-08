@@ -12,12 +12,12 @@ echo "Loading ${MODULE_NAME} module..."
 # Remove the module if already loaded
 if lsmod | grep -q "${MODULE_NAME}"; then
     echo "Removing existing ${MODULE_NAME} module..."
-    sudo rmmod "${MODULE_NAME}"
+    rmmod "${MODULE_NAME}"
 fi
 
 # Install the module
 echo "Installing ${MODULE_NAME} module..."
-sudo insmod "./${MODULE_NAME}.ko"
+ insmod "./${MODULE_NAME}.ko"
 
 # Verify the module is loaded
 if lsmod | grep -q "${MODULE_NAME}"; then

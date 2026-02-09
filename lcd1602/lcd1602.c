@@ -127,7 +127,7 @@ static int lcd_write_nibble(struct i2c_client *client, u8 nibble, u8 mode) {
     if (ret < 0)
         return ret;
 
-    udelay(1);
+    udelay(20);
 
     /* pulse EN low */
     data &= ~LCD_EN;

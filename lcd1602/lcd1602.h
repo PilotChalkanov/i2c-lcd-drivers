@@ -1,5 +1,5 @@
 /*
- * aesdchar.h
+ * lcd1602.h
  *
  *  Copyright: Oct 23, 2019
  *      Author: Dan Walkes

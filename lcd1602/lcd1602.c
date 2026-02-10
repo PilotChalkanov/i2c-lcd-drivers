@@ -269,6 +269,26 @@ static int lcd_write_buffer(struct lcd1602_data *lcd, const char *buf, size_t le
     msleep(2);
 
     for (i = 0; i < max_len; i++) {
+        unsigned char ch = (unsigned char)buf[i];
+
+        if (ch == '\0')
+            break;
+
+        if (ch == '\r')
+            continue;
+
+        if (ch == '\n') {
+            /* Move to second line */
+            ret = lcd_send_command(lcd->client, 0xC0);
+            if (ret < 0)
+                return ret;
+            msleep(1);
+            continue;
+        }
+
+        if (ch < 0x20 || ch > 0x7E)
+            ch = ' ';
+
         if (i == 16) {
             /* Move to second line */
             ret = lcd_send_command(lcd->client, 0xC0);
@@ -277,7 +297,7 @@ static int lcd_write_buffer(struct lcd1602_data *lcd, const char *buf, size_t le
             msleep(1);
         }
 
-        ret = lcd_send_data(lcd->client, buf[i]);
+        ret = lcd_send_data(lcd->client, ch);
         if (ret < 0)
             return ret;
     }

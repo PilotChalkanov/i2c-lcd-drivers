@@ -301,7 +301,6 @@ static ssize_t lcd1602_write(struct file *file, const char __user *ubuf,
 
     if (copy_from_user(kbuf, ubuf, to_copy))
         return -EFAULT;
-    kbuf[to_copy] = '\0';
 
     mutex_lock(&lcd->lock);
     ret = lcd_write_buffer(lcd, kbuf, to_copy);

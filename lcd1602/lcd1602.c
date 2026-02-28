@@ -254,8 +254,9 @@ static int lcd_write_string(struct i2c_client *client, const char *str) {
 /* Writes up to 2x16 chars from buffer to LCD. Excess is truncated. */
 static int lcd_write_buffer(struct lcd1602_data *lcd, const char *buf, size_t len) {
     int ret;
-    size_t i;
+    size_t i, disp_count = 0;
     size_t max_len = min(len, (size_t)32); /* 16 chars per line, 2 lines */
+    int line_switched = 0;
 
     /* Reset cursor and clear display */
     ret = lcd_send_command(lcd->client, LCD_CLEAR);
@@ -268,18 +269,29 @@ static int lcd_write_buffer(struct lcd1602_data *lcd, const char *buf, size_t le
         return ret;
     msleep(2);
 
-    for (i = 0; i < max_len; i++) {
-        if (i == 16) {
-            /* Move to second line */
+    for (i = 0; i < max_len && disp_count < 32; i++) {
+        if (buf[i] == '\n' && !line_switched) {
             ret = lcd_send_command(lcd->client, 0xC0);
             if (ret < 0)
                 return ret;
             msleep(1);
+            disp_count = 16;
+            line_switched = 1;
+            continue;
         }
-
-        ret = lcd_send_data(lcd->client, buf[i]);
-        if (ret < 0)
-            return ret;
+        if (disp_count == 16 && !line_switched) {
+            ret = lcd_send_command(lcd->client, 0xC0);
+            if (ret < 0)
+                return ret;
+            msleep(1);
+            line_switched = 1;
+        }
+        if (buf[i] != '\n') {
+            ret = lcd_send_data(lcd->client, buf[i]);
+            if (ret < 0)
+                return ret;
+            disp_count++;
+        }
     }
 
     return 0;
